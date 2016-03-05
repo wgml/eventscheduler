@@ -37,4 +37,18 @@ public class UserService {
   public boolean deleteUser(long id) {
     return allUsers.removeIf(user -> user.getId() == id && !user.getUserType().equals(UserType.ADMINISTRATOR));
   }
+
+  public Optional<User> tryLogin(String username, String password) {
+    return allUsers.stream()
+        .filter(user -> user.getUsername().equals(username))
+        .filter(user1 -> user1.getPassword().equals(password))
+        .findAny();
+  }
+
+  public Optional<User> tryRegister(String username, String password, String email) {
+
+    User user = new User(username, password, email, UserType.REGULAR);
+    allUsers.add(user);
+    return Optional.of(user);
+  }
 }

@@ -16,6 +16,7 @@
     <title>Events</title>
 </head>
 <body>
+<%@include file="navbar.jsp"%>
 <c:if test="${not empty message}">
     <div class="alert alert-success">
             ${message}
