@@ -16,7 +16,7 @@
 </head>
 <body>
 <div class="container">
-    <h2>Service users</h2>
+    <h3>Search users</h3>
     <form action="/users" method="get" id="searchByName" role="form">
         <input type="hidden" id="searchBy" name="searchBy" value="name"/>
         <div class="form-group col-xs-5">
@@ -39,46 +39,47 @@
             ${message}
     </div>
 </c:if>
-
-<table class="table table-striped">
-    <thead>
-    <tr>
-        <td>#</td>
-        <td>Username</td>
-        <td>E-mail</td>
-        <td>Role</td>
-        <td></td>
-    </tr>
-    </thead>
-
-    <c:forEach var="user" items="${userList}">
-        <tr class="${classSuccess}">
-            <td>
-                <a href="/users?id=${user.id}&searchBy=id">${user.id}</a>
-            </td>
-            <td>${user.username}</td>
-            <td>${user.email}</td>
-            <td>
-                <c:choose>
-                    <c:when test="${user.userType eq 'ADMINISTRATOR'}">
-                        <span class="glyphicon glyphicon-heart">Administrator</span>
-                    </c:when>
-                    <c:otherwise>
-                        <span class="glyphicon glyphicon-heart-empty">Regular user</span>
-                    </c:otherwise>
-                </c:choose>
-            </td>
-            <td><a href="#" id="remove"
-                   onclick="document.getElementById('action').value = 'delete';document.getElementById('userId').value = '${user.id}';
-
-                           document.getElementById('deleteForm').submit();">
-                <span class="glyphicon glyphicon-trash"></span>
-            </a>
-            </td>
+<div class="container">
+    <h3>List of users</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <td>#</td>
+            <td>Username</td>
+            <td>E-mail</td>
+            <td>Role</td>
+            <td></td>
         </tr>
-    </c:forEach>
-</table>
+        </thead>
 
+        <c:forEach var="user" items="${userList}">
+            <tr class="${classSuccess}">
+                <td>
+                    <a href="/users?id=${user.id}&searchBy=id">${user.id}</a>
+                </td>
+                <td>${user.username}</td>
+                <td>${user.email}</td>
+                <td>
+                    <c:choose>
+                        <c:when test="${user.userType eq 'ADMINISTRATOR'}">
+                            <span class="glyphicon glyphicon-heart">Administrator</span>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="glyphicon glyphicon-heart-empty">Regular user</span>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+                <td><a href="#" id="remove"
+                       onclick="document.getElementById('action').value = 'delete';document.getElementById('userId').value = '${user.id}';
+
+                               document.getElementById('deleteForm').submit();">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </a>
+                </td>
+            </tr>
+        </c:forEach>
+    </table>
+</div>
 
 </body>
 </html>

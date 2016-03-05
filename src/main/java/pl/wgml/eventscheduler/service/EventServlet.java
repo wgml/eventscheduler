@@ -1,9 +1,9 @@
 package pl.wgml.eventscheduler.service;
 
-import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pl.wgml.eventscheduler.dao.pojo.User;
+import org.joda.time.DateTime;
+import pl.wgml.eventscheduler.dao.pojo.Event;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,43 +15,44 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @WebServlet(
-    name = "UserServlet",
-    urlPatterns = {"/users"}
+    name = "EventServlet",
+    urlPatterns = {"/events"}
 )
-public class UserServlet extends HttpServlet {
+public class EventServlet extends HttpServlet {
 
   private static final Logger logger = LogManager.getLogger();
-  UserService service = new UserService();
+  EventService eventService = new EventService();
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    logger.debug("Received get request.");
+    logger.debug("Received GET request.");
+    List<Event> result = eventService.getAllEvents();
     String action = request.getParameter("searchBy");
-
-    List<User> result = Collections.emptyList();
     if (action == null) {
-      result = service.getAllUsers();
+      result = eventService.getAllEvents();
     } else if (action.equals("id")) {
       String id = request.getParameter("id");
       try {
-        Optional<User> user = service.getById(Long.valueOf(id));
-        if (user.isPresent()) {
-          result = Collections.singletonList(user.get());
+        Optional<Event> event = eventService.getById(Long.valueOf(id));
+        if (event.isPresent()) {
+          result = Collections.singletonList(event.get());
         }
       } catch (NumberFormatException e) {
         logger.warn("Exception caught during execution.", e);
       }
-    } else if (action.equals("name")) {
-      String name = request.getParameter("name");
-      result = ListUtils.union(service.getByName(name), service.getByEmail(name))
-          .stream()
-          .distinct()
-          .collect(Collectors.toList());
+    } else if (action.equals("date")) {
+      String date = request.getParameter("date");
+      if (date != null && !date.isEmpty()) {
+        result = eventService.getByDate(DateTime.parse(date));
+      }
+      date = request.getParameter("after");
+      if (date != null && !date.isEmpty()) {
+        result = eventService.getAfterDate(DateTime.parse(date));
+      }
     }
-    showUsers(request, response, result);
+    showEvents(request, response, result);
   }
 
   @Override
@@ -59,19 +60,21 @@ public class UserServlet extends HttpServlet {
     logger.debug("Received post request.");
     String action = request.getParameter("action");
     if (action.equals("delete")) {
-      Integer id = Integer.valueOf(request.getParameter("userId"));
-      boolean deleted = service.deleteUser(id);
-      String msg = deleted ? "Successfully deleted user." : "Could not delete user.";
+      Integer id = Integer.valueOf(request.getParameter("eventId"));
+      boolean deleted = eventService.deleteEvent(id);
+      String msg = deleted ? "Successfully deleted event." : "Could not delete event.";
       logger.info(msg + " [id=" + id + "]");
       request.setAttribute("message", msg);
     }
-    showUsers(request, response, service.getAllUsers());
+    showEvents(request, response, eventService.getAllEvents());
   }
 
-  private void showUsers(HttpServletRequest request, HttpServletResponse response, List<User> result) throws ServletException, IOException {
-    String nextJsp = "/jsp/list-users.jsp";
+  private void showEvents(HttpServletRequest request, HttpServletResponse response, List<Event> result) throws ServletException, IOException {
+    String nextJsp = "/jsp/list-events.jsp";
     RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJsp);
-    request.setAttribute("userList", result);
+    request.setAttribute("eventList", result);
     dispatcher.forward(request, response);
+
   }
+
 }

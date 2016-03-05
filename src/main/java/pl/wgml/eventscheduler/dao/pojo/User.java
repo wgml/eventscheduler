@@ -19,6 +19,14 @@ public class User {
     this.id = idProvider.incrementAndGet();
   }
 
+  public User(Long id, String username, String password, String email, UserType userType) {
+    this.id = id;
+    this.username = username;
+    this.password = password;
+    this.email = email;
+    this.userType = userType;
+  }
+
   public Long getId() {
     return id;
   }
