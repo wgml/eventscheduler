@@ -15,6 +15,12 @@
     <title>Users</title>
 </head>
 <body>
+<c:if test="${not empty message}">
+    <div class="alert alert-success">
+            ${message}
+    </div>
+</c:if>
+
 <div class="container">
     <h3>Search users</h3>
     <form action="/users" method="get" id="searchByName" role="form">
@@ -33,12 +39,6 @@
     </form>
 </div>
 
-<!-- list results -->
-<c:if test="${not empty message}">
-    <div class="alert alert-success">
-            ${message}
-    </div>
-</c:if>
 <div class="container">
     <h3>List of users</h3>
     <table class="table table-striped">
@@ -57,7 +57,7 @@
                 <td>
                     <a href="/users?id=${user.id}&searchBy=id">${user.id}</a>
                 </td>
-                <td>${user.username}</td>
+                <td><a href="/user?id=${user.id}">${user.username}</a></td>
                 <td>${user.email}</td>
                 <td>
                     <c:choose>

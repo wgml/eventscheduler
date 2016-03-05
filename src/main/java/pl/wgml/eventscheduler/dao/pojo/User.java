@@ -1,5 +1,8 @@
 package pl.wgml.eventscheduler.dao.pojo;
 
+import com.google.common.base.Objects;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 public class User {
@@ -65,5 +68,28 @@ public class User {
 
   public void setUserType(UserType userType) {
     this.userType = userType;
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+        .append("id", id)
+        .append("username", username)
+        .append("email", email)
+        .append("userType", userType)
+        .toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return Objects.equal(id, user.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(id);
   }
 }

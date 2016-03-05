@@ -16,6 +16,11 @@
     <title>Events</title>
 </head>
 <body>
+<c:if test="${not empty message}">
+    <div class="alert alert-success">
+            ${message}
+    </div>
+</c:if>
 <div class="container">
     <h3>Search events</h3>
     <form action="/events" method="get" id="searchByName" role="form" class="form-inline">
@@ -39,14 +44,6 @@
         <input type="hidden" id="action" name="action">
     </form>
 </div>
-
-<!-- list results -->
-<c:if test="${not empty message}">
-    <div class="alert alert-success">
-            ${message}
-    </div>
-</c:if>
-
 <div class="container">
     <h3>List of events</h3>
     <table class="table table-striped">
@@ -62,13 +59,14 @@
         </thead>
 
         <c:forEach var="event" items="${eventList}">
-            <tr class="${classSuccess}">
+            <tr>
                 <td>
                     <a href="/events?id=${event.id}&searchBy=id">${event.id}</a>
                 </td>
-                <td>${event.name}</td>
                 <td>
-                    <a href="/user&id=${event.creator.id}">${event.creator.username}</a>
+                    <a href="/event?id=${event.id}">${event.name}</a></td>
+                <td>
+                    <a href="/user?id=${event.creator.id}">${event.creator.username}</a>
                 </td>
                 <td>
                     <fmt:formatDate type="both" value="${event.startDate}"/>
@@ -87,6 +85,5 @@
         </c:forEach>
     </table>
 </div>
-
 </body>
 </html>

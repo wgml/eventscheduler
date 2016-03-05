@@ -2,6 +2,7 @@ package pl.wgml.eventscheduler.service;
 
 import org.joda.time.DateTime;
 import pl.wgml.eventscheduler.dao.pojo.Event;
+import pl.wgml.eventscheduler.dao.pojo.User;
 import pl.wgml.eventscheduler.dao.pojo.helper.EventList;
 
 import java.util.List;
@@ -19,6 +20,12 @@ public class EventService {
   public List<Event> getByName(String name) {
     return allEvents.stream()
         .filter(event -> event.getName().toLowerCase().contains(name.toLowerCase()))
+        .collect(Collectors.toList());
+  }
+
+  public List<Event> getByCreator(User creator) {
+    return allEvents.stream()
+        .filter(event -> event.getCreator().getId().equals(creator.getId()))
         .collect(Collectors.toList());
   }
 
