@@ -96,6 +96,9 @@ public class EditEventServlet extends AbstractServlet {
     if (!EventValidation.validateEndDate(endDate)) {
       errorMsg = "Invalid end date";
     }
+    if (endDate.isBefore(startDate)) {
+      errorMsg = "End must be after start.";
+    }
 
     if (errorMsg != null) {
       throw new Exception(errorMsg);
