@@ -16,9 +16,19 @@
 </c:if>
 
 <div class="container">
+    <form action="/editevent" method="post" id="deleteForm" role="form">
+        <input type="hidden" id="deletedEventId" name="deletedEventId">
+        <input type="hidden" id="deleteAction" name="deleteAction">
+    </form>
     <c:choose>
         <c:when test="${not empty event}">
-            <h3>Edit ${event.name}</h3>
+            <h3>Edit ${event.name}
+            <a href="#" id="remove"
+                   onclick="document.getElementById('deleteAction').value = 'delete';document.getElementById('deletedEventId').value = '${event.id}';
+
+                           document.getElementById('deleteForm').submit();">
+                <span class="glyphicon glyphicon-trash"></span>
+            </a></h3>
         </c:when>
         <c:otherwise>
             <h3>Create new event</h3>

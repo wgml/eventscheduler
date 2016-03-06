@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import pl.wgml.eventscheduler.dao.pojo.Event;
 import pl.wgml.eventscheduler.dao.pojo.Invitation;
 import pl.wgml.eventscheduler.dao.pojo.User;
+import pl.wgml.eventscheduler.permissions.AccessPermissions;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,7 +20,7 @@ import java.util.List;
     name = "EventServlet",
     urlPatterns = {"/event"}
 )
-public class EventServlet extends HttpServlet {
+public class EventServlet extends AbstractServlet {
   private static final Logger logger = LogManager.getLogger();
 
   private UserService userService = new UserService();
@@ -31,7 +32,7 @@ public class EventServlet extends HttpServlet {
     logger.debug("Received get request.");
     try {
       long eventId = Long.valueOf(request.getParameter("id"));
-      Event event = eventService.getById(eventId).get();
+      Event event = eventService.getById(eventId, getUser(request)).get();
       showEvent(event, request, response);
     } catch (Exception e) {
       logger.warn("Failed to present event.", e);
@@ -40,31 +41,38 @@ public class EventServlet extends HttpServlet {
   }
 
   @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {    try {
-    logger.debug("Received post request.");
-    long eventId = Long.valueOf(request.getParameter("id"));
-    Event event = eventService.getById(eventId).get();
-    String action = request.getParameter("action");
-    boolean status;
-    User user;
-    if (action.equals("invite")) {
-      long userId = Long.valueOf(request.getParameter("userId"));
-      user = userService.getById(userId).get();
-      status = invitationService.inviteUserToEvent(user, event);
-    } else {
-      long userId = Long.valueOf(request.getParameter("deletedUserId"));
-      user = userService.getById(userId).get();
-      status = invitationService.removeUserToEvent(user, event);
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    try {
+      logger.debug("Received post request.");
+      long eventId = Long.valueOf(request.getParameter("id"));
+      Event event = eventService.getById(eventId, getUser(request)).get();
+      String action = request.getParameter("action");
+      boolean status;
+      User user;
+      if (action.equals("invite")) {
+        if (!AccessPermissions.canInviteToEvent(event, getUser(request))) {
+          throw new Exception("Cannot invite to " + event + " as user " + getUser(request));
+        }
+        long userId = Long.valueOf(request.getParameter("userId"));
+        user = userService.getById(userId).get();
+        status = invitationService.inviteUserToEvent(user, event);
+      } else {
+        if (!AccessPermissions.canRemoveFromEvent(event, getUser(request))) {
+          throw new Exception("Cannot remove invitation to " + event + " as user " + getUser(request));
+        }
+        long userId = Long.valueOf(request.getParameter("deletedUserId"));
+        user = userService.getById(userId).get();
+        status = invitationService.removeUserToEvent(user, event);
+      }
+      String msg = status ? "Successfully modified invitation."
+          : "Failed to modify invitation.";
+      logger.info(msg + user + event);
+      request.setAttribute("message", msg);
+      showEvent(event, request, response);
+    } catch (Exception e) {
+      logger.warn("Failed to present event.", e);
+      response.sendRedirect("/events");
     }
-    String msg = status ? "Successfully modified invitation."
-        : "Failed to modify invitation.";
-    logger.info(msg + user + event);
-    request.setAttribute("message", msg);
-    showEvent(event, request, response);
-  } catch (Exception e) {
-    logger.warn("Failed to present event.", e);
-    response.sendRedirect("/events");
-  }
 
   }
 

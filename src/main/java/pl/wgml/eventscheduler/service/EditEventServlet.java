@@ -5,12 +5,12 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import pl.wgml.eventscheduler.dao.pojo.Event;
 import pl.wgml.eventscheduler.dao.pojo.User;
+import pl.wgml.eventscheduler.permissions.AccessPermissions;
 import pl.wgml.eventscheduler.validation.EventValidation;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import java.util.Optional;
     name = "EditEventServlet",
     urlPatterns = {"/editevent"}
 )
-public class EditEventServlet extends HttpServlet {
+public class EditEventServlet extends AbstractServlet {
 
   private static final Logger logger = LogManager.getLogger();
 
@@ -28,26 +28,51 @@ public class EditEventServlet extends HttpServlet {
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String eventIdStr = request.getParameter("id");
-    if (eventIdStr != null && !eventIdStr.isEmpty()) {
-      Optional<Event> event = eventService.getById(Long.parseLong(eventIdStr));
-      if (!event.isPresent()) {
-        response.sendRedirect("/events");
+    try {
+      Optional<User> user = getUser(request);
+      if (!user.isPresent()) {
+        throw new Exception("Not logged in");
       }
-      request.setAttribute("event", event.get());
+      String eventIdStr = request.getParameter("id");
+      if (eventIdStr != null && !eventIdStr.isEmpty()) {
+        Optional<Event> event = eventService.getById(Long.parseLong(eventIdStr), getUser(request));
+        if (!event.isPresent()) {
+          throw new Exception("Invalid event id.");
+        }
+        if (!AccessPermissions.canEditEvent(event.get(), user.get())) {
+          throw new Exception("Cannot edit given event.");
+        }
+        request.setAttribute("event", event.get());
+      }
+      showForm(request, response);
+    } catch (Exception e) {
+      logger.warn("Exception caught.", e);
+      response.sendRedirect("/events");
     }
-    showForm(request, response);
   }
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     try {
-      handleForm(request, response);
+      if (request.getParameter("deleteAction") != null) {
+        deleteEvent(request, response);
+      } else {
+        handleForm(request, response);
+      }
     } catch (Exception e) {
       logger.warn("Exception during doPost.", e);
       request.setAttribute("message", e.getMessage());
       showForm(request, response);
     }
+  }
+
+  private void deleteEvent(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Integer id = Integer.valueOf(request.getParameter("deletedEventId"));
+    boolean deleted = eventService.deleteEvent(id);
+    String msg = deleted ? "Successfully deleted event." : "Could not delete event.";
+    logger.info(msg + " [id=" + id + "]");
+    request.setAttribute("message", msg);
+    response.sendRedirect("/events");
   }
 
   private void handleForm(HttpServletRequest request, HttpServletResponse response) throws Exception {

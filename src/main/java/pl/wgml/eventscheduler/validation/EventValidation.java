@@ -4,7 +4,6 @@ import org.joda.time.DateTime;
 
 public class EventValidation extends GeneralValidation {
 
-
   public static boolean validateName(String name) {
     return !nullOrEmpty(name);
   }

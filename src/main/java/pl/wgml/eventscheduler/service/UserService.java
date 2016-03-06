@@ -3,6 +3,7 @@ package pl.wgml.eventscheduler.service;
 import pl.wgml.eventscheduler.dao.pojo.User;
 import pl.wgml.eventscheduler.dao.pojo.UserType;
 import pl.wgml.eventscheduler.dao.pojo.helper.UserList;
+import pl.wgml.eventscheduler.permissions.AccessPermissions;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +35,8 @@ public class UserService {
         .findFirst();
   }
 
-  public boolean deleteUser(long id) {
-    return allUsers.removeIf(user -> user.getId() == id && !user.getUserType().equals(UserType.ADMINISTRATOR));
+  public boolean deleteUser(long id, Optional<User> loggedUser) {
+    return allUsers.removeIf(user -> user.getId() == id && AccessPermissions.canDeleteUser(user, loggedUser));
   }
 
   public Optional<User> tryLogin(String username, String password) {

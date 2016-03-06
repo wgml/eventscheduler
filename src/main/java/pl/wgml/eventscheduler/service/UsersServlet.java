@@ -8,7 +8,6 @@ import pl.wgml.eventscheduler.dao.pojo.User;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
     name = "UsersServlet",
     urlPatterns = {"/users"}
 )
-public class UsersServlet extends HttpServlet {
+public class UsersServlet extends AbstractServlet {
 
   private static final Logger logger = LogManager.getLogger();
   private UserService service = new UserService();
@@ -60,7 +59,7 @@ public class UsersServlet extends HttpServlet {
     String action = request.getParameter("action");
     if (action.equals("delete")) {
       Integer id = Integer.valueOf(request.getParameter("userId"));
-      boolean deleted = service.deleteUser(id);
+      boolean deleted = service.deleteUser(id, getUser(request));
       String msg = deleted ? "Successfully deleted user." : "Could not delete user.";
       logger.info(msg + " [id=" + id + "]");
       request.setAttribute("message", msg);

@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import pl.wgml.eventscheduler.dao.pojo.Event;
 import pl.wgml.eventscheduler.dao.pojo.Invitation;
 import pl.wgml.eventscheduler.dao.pojo.User;
+import pl.wgml.eventscheduler.permissions.AccessPermissions;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,12 +15,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @WebServlet(
     name = "UserServlet",
     urlPatterns = {"/user"}
 )
-public class UserServlet extends HttpServlet {
+public class UserServlet extends AbstractServlet {
 
   private static final Logger logger = LogManager.getLogger();
 
@@ -49,6 +51,13 @@ public class UserServlet extends HttpServlet {
       User user = userService.getById(userId).get();
       int invId = Integer.valueOf(request.getParameter("invId"));
       String action = request.getParameter("action");
+      Optional<Invitation> invitation = invitationService.getById(invId);
+      if (!invitation.isPresent()) {
+        throw new Exception("Invitation not found.");
+      }
+      if (!AccessPermissions.canEditInvitation(invitation.get(), getUser(request))) {
+        throw new Exception("Cannot edit invitation " + invitation.get() + " as user " + getUser(request));
+      }
       if (action.equals("accept")) {
         invitationService.acceptInvitation(user, invId);
       } else {
@@ -62,8 +71,8 @@ public class UserServlet extends HttpServlet {
   }
 
   private void showUser(HttpServletRequest request, HttpServletResponse response, User user) throws ServletException, IOException {
-    List<Event> userCreatedEvents = eventService.getByCreator(user);
-    List<Invitation> invitations = invitationService.getByUser(user);
+    List<Event> userCreatedEvents = eventService.getByCreator(user, getUser(request));
+    List<Invitation> invitations = invitationService.getByUser(user, getUser(request));
 
     String nextJsp = "/jsp/user.jsp";
     RequestDispatcher dispatcher;

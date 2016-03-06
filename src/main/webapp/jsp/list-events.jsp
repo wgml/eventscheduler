@@ -40,10 +40,6 @@
             </button>
         </div>
     </form>
-    <form action="/events" method="post" id="deleteForm" role="form">
-        <input type="hidden" id="eventId" name="eventId">
-        <input type="hidden" id="action" name="action">
-    </form>
 </div>
 <div class="container">
     <h3>List of events</h3>
@@ -55,7 +51,6 @@
             <td>Created by</td>
             <td>Starting</td>
             <td>Ending</td>
-            <td></td>
         </tr>
         </thead>
 
@@ -74,13 +69,6 @@
                 </td>
                 <td>
                     <fmt:formatDate type="both" value="${event.endDate}"/>
-                </td>
-                <td><a href="#" id="remove"
-                       onclick="document.getElementById('action').value = 'delete';document.getElementById('eventId').value = '${event.id}';
-
-                               document.getElementById('deleteForm').submit();">
-                    <span class="glyphicon glyphicon-trash"></span>
-                </a>
                 </td>
             </tr>
         </c:forEach>

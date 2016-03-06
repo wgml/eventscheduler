@@ -7,6 +7,7 @@ import pl.wgml.eventscheduler.dao.pojo.Invitation;
 import pl.wgml.eventscheduler.dao.pojo.User;
 import pl.wgml.eventscheduler.dao.pojo.helper.InvitationList;
 import pl.wgml.eventscheduler.dao.pojo.helper.UserList;
+import pl.wgml.eventscheduler.permissions.AccessPermissions;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,9 +19,10 @@ public class InvitationService {
 
   private List<Invitation> invitations = InvitationList.getInvitations();
 
-  public List<Invitation> getByUser(User user) {
+  public List<Invitation> getByUser(User user, Optional<User> loggedUser) {
     return invitations.stream()
         .filter(inv -> inv.getUser().getId().equals(user.getId()))
+        .filter(inv -> AccessPermissions.canSeeInvitation(inv, loggedUser))
         .collect(Collectors.toList());
   }
 
@@ -74,5 +76,11 @@ public class InvitationService {
         .stream()
         .filter(user -> !invited.contains(user))
         .collect(Collectors.toList());
+  }
+
+  public Optional<Invitation> getById(long invId) {
+    return invitations.stream()
+        .filter(inv -> inv.getId().equals(invId))
+        .findFirst();
   }
 }
