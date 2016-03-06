@@ -29,11 +29,11 @@
             <input type="hidden" id="searchBy" name="searchBy" value="date"/>
             <div class="form-group">
                 <label for="date">On exact day</label>
-                <input type="date" class="form_datetime" id="date" name="date"/>
+                <input type="date" class="form_datetime form-control" id="date" name="date"/>
             </div>
             <div class="form-group">
                 <label for="after">After</label>
-                <input type="date" name="after" id="after"/>
+                <input type="date" name="after" id="after" class="form-control"/>
             </div>
             <button type="submit" class="btn btn-info">
                 <span class="glyphicon glyphicon-search"></span> Search

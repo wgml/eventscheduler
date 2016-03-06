@@ -1,10 +1,6 @@
 package pl.wgml.eventscheduler.validation;
 
-public class UserValidation {
-
-  public static boolean nullOrEmpty(String str) {
-    return str == null || str.isEmpty();
-  }
+public class UserValidation extends GeneralValidation{
 
   public static boolean validateUsername(String username) {
     return !nullOrEmpty(username);

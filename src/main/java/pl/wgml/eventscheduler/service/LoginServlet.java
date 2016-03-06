@@ -11,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -41,6 +42,10 @@ public class LoginServlet extends HttpServlet {
     Optional<User> user = userService.tryLogin(username, password);
     if (user.isPresent()) {
       logger.info("Logged as " + user.get());
+      HttpSession session = request.getSession();
+      session.setAttribute("loggedUser", user.get());
+      session.setMaxInactiveInterval(60 * 60);
+
       response.sendRedirect("/user?id=" + user.get().getId());
     } else {
       logger.info("Tried to login as " + username + " with password " + password);

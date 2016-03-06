@@ -6,7 +6,7 @@
 <head>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <script src="../js/bootstrap.min.js"></script>
-    <title>Register or login</title>
+    <title>Login</title>
 </head>
 <body>
 <%@include file="navbar.jsp"%>

@@ -76,11 +76,11 @@ public class Event {
     this.endDate = endDate;
   }
 
-  public boolean getPublic() {
+  public boolean getIsPublic() {
     return isPublic;
   }
 
-  public void setPublic(boolean is_public) {
+  public void setIsPublic(boolean is_public) {
     this.isPublic = is_public;
   }
 }

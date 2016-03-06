@@ -38,7 +38,7 @@
                 <fmt:formatDate type="both" value="${event.endDate}"/>
             </td>
             <td>
-                <a href="/event?id=${event.id}">
+                <a href="/editevent?id=${event.id}">
                     <span class="glyphicon glyphicon-cog"></span>
                 </a>
             </td>
