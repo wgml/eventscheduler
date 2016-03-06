@@ -40,7 +40,7 @@ public class Invitation {
     this.user = user;
     this.event = event;
     this.accepted = accepted;
-    this.id = idProvider.incrementAndGet();
+//    this.id = idProvider.incrementAndGet();
   }
 
   public Invitation() {

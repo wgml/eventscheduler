@@ -1,13 +1,12 @@
 package pl.wgml.eventscheduler.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import pl.wgml.eventscheduler.dao.pojo.Event;
 import pl.wgml.eventscheduler.dao.pojo.Invitation;
 import pl.wgml.eventscheduler.dao.pojo.User;
-import pl.wgml.eventscheduler.dao.pojo.helper.InvitationList;
-import pl.wgml.eventscheduler.dao.pojo.helper.UserList;
 import pl.wgml.eventscheduler.permissions.AccessPermissions;
+import pl.wgml.eventscheduler.persistence.HibernateUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,56 +14,73 @@ import java.util.stream.Collectors;
 
 public class InvitationService {
 
-  private static final Logger logger = LogManager.getLogger();
-
-  private List<Invitation> invitations = InvitationList.getInvitations();
+  UserService userService = new UserService();
 
   public List<Invitation> getByUser(User user, Optional<User> loggedUser) {
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    @SuppressWarnings("unchecked")
+    List<Invitation> invitations = (List<Invitation>) session.createCriteria(Invitation.class)
+        .add(Restrictions.eq("user", user)).list();
+    session.close();
     return invitations.stream()
-        .filter(inv -> inv.getUser().getId().equals(user.getId()))
         .filter(inv -> AccessPermissions.canSeeInvitation(inv, loggedUser))
         .collect(Collectors.toList());
   }
 
   public List<Invitation> getByEvent(Event event) {
-    return invitations.stream()
-        .filter(inv -> inv.getEvent().getId().equals(event.getId()))
-        .collect(Collectors.toList());
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    @SuppressWarnings("unchecked")
+    List<Invitation> invitations = (List<Invitation>) session.createCriteria(Invitation.class)
+        .add(Restrictions.eq("event", event)).list();
+    session.close();
+    return invitations;
   }
 
-  public boolean acceptInvitation(User user, long invId) {
-    return setInvStatus(user, invId, true);
+  public boolean acceptInvitation(User user, Invitation invitation) {
+    return setInvStatus(user, invitation, true);
   }
 
-  public boolean ignoreInvitation(User user, long invId) {
-    return setInvStatus(user, invId, false);
+  public boolean ignoreInvitation(User user, Invitation invitation) {
+    return setInvStatus(user, invitation, false);
   }
 
-  private boolean setInvStatus(User user, long invId, boolean status) {
-    Optional<Invitation> invitation = invitations.stream()
-        .filter(inv -> inv.getId().equals(invId) && inv.getUser().getId().equals(user.getId()))
-        .findAny();
-    if (!invitation.isPresent()) {
-      logger.warn("Wanted to modify invalid invitation: " + invId + ", " + user);
+  private boolean setInvStatus(User user, Invitation invitation, boolean status) {
+    if (!invitation.getUser().equals(user)) {
       return false;
     }
-    logger.info("Changed invitation " + invitation.get() + " status to " + status);
-    invitation.get().setAccepted(status);
+    invitation.setAccepted(status);
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    session.beginTransaction();
+    session.update(invitation);
+    session.getTransaction().commit();
+    session.close();
     return true;
   }
 
   public boolean inviteUserToEvent(User user, Event event) {
-    if (invitations.stream().anyMatch(inv -> inv.getUser().getId().equals(user.getId())
-    && inv.getEvent().getId().equals(event.getId()))) {
+    if (getByEvent(event).stream().anyMatch(inv -> inv.getUser().equals(user))) {
       return false;
     }
-    invitations.add(new Invitation(user, event));
-    return true;
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    session.beginTransaction();
+    Invitation invitation = new Invitation(user, event);
+    Long id = (Long) session.save(invitation);
+    session.getTransaction().commit();
+    session.close();
+    return id >= 0;
   }
 
   public boolean removeUserToEvent(User user, Event event) {
-    return invitations.removeIf(inv -> inv.getUser().getId().equals(user.getId())
-        && inv.getEvent().getId().equals(event.getId()));
+    Optional<Invitation> invitation = getByEvent(event).stream().filter(inv -> inv.getUser().equals(user)).findAny();
+    if (!invitation.isPresent()) {
+      return false;
+    }
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    session.beginTransaction();
+    session.delete(invitation.get());
+    session.getTransaction().commit();
+    session.close();
+    return true;
   }
 
   public List<User> getNotInvitedForEvent(Event event) {
@@ -72,15 +88,17 @@ public class InvitationService {
         .stream()
         .map(Invitation::getUser)
         .collect(Collectors.toList());
-    return UserList.getUsers()
+
+    return userService.getAllUsers()
         .stream()
         .filter(user -> !invited.contains(user))
         .collect(Collectors.toList());
   }
 
   public Optional<Invitation> getById(long invId) {
-    return invitations.stream()
-        .filter(inv -> inv.getId().equals(invId))
-        .findFirst();
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    Invitation invitation = session.get(Invitation.class, invId);
+    session.close();
+    return Optional.ofNullable(invitation);
   }
 }

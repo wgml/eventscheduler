@@ -59,9 +59,9 @@ public class UserServlet extends AbstractServlet {
         throw new Exception("Cannot edit invitation " + invitation.get() + " as user " + getUser(request));
       }
       if (action.equals("accept")) {
-        invitationService.acceptInvitation(user, invId);
+        invitationService.acceptInvitation(user, invitation.get());
       } else {
-        invitationService.ignoreInvitation(user, invId);
+        invitationService.ignoreInvitation(user, invitation.get());
       }
       showUser(request, response, user);
     } catch (Exception e) {

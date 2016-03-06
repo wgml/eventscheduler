@@ -49,7 +49,13 @@ public class RegisterServlet extends HttpServlet {
       return;
     }
 
-    Optional<User> user = userService.tryRegister(username, password, email);
+    Optional<User> user = Optional.empty();
+
+    try {
+      user = userService.tryRegister(username, password, email);
+    } catch (Exception e) {
+      logger.warn("Cannot register user.", e);
+    }
     if (user.isPresent()) {
       logger.info("Created new user: " + user.get());
       request.setAttribute("successMsg", "Account created. You can now login.");

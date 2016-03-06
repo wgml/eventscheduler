@@ -45,7 +45,7 @@ public class Event {
     this.startDate = startDate;
     this.endDate = endDate;
     this.isPublic = isPublic;
-    this.id = idProvider.incrementAndGet();
+//    this.id = idProvider.incrementAndGet();
   }
 
   public Event() {

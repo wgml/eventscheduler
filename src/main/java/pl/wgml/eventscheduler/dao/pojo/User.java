@@ -40,7 +40,7 @@ public class User {
     this.password = password;
     this.email = email;
     this.admin = userType.equals(UserType.ADMINISTRATOR);
-    this.id = idProvider.incrementAndGet();
+//    this.id = idProvider.incrementAndGet();
   }
 
   public User(Long id, String username, String password, String email, UserType userType) {
