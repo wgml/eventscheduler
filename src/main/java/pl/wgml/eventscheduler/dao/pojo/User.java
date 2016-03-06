@@ -3,22 +3,43 @@ package pl.wgml.eventscheduler.dao.pojo;
 import com.google.common.base.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Entity
+@Table(name = "user")
 public class User {
+
+  @Id
+  @GeneratedValue
   private Long id;
+
+  @Column(name = "username")
   private String username;
+
+  @Column(name = "password")
   private String password;
+
+  @Column(name = "email")
   private String email;
-  private UserType userType;
+
+  @Column(name = "admin")
+  private boolean admin;
 
   private static AtomicLong idProvider = new AtomicLong(0);
+
+  public User() {
+  }
 
   public User(String username, String password, String email, UserType userType) {
     this.username = username;
     this.password = password;
     this.email = email;
-    this.userType = userType;
+    this.admin = userType.equals(UserType.ADMINISTRATOR);
     this.id = idProvider.incrementAndGet();
   }
 
@@ -27,7 +48,7 @@ public class User {
     this.username = username;
     this.password = password;
     this.email = email;
-    this.userType = userType;
+    this.admin = userType.equals(UserType.ADMINISTRATOR);
   }
 
   public Long getId() {
@@ -63,11 +84,11 @@ public class User {
   }
 
   public UserType getUserType() {
-    return userType;
+    return admin ? UserType.ADMINISTRATOR : UserType.REGULAR;
   }
 
   public void setUserType(UserType userType) {
-    this.userType = userType;
+    this.admin = UserType.ADMINISTRATOR.equals(userType);
   }
 
   @Override
@@ -76,7 +97,7 @@ public class User {
         .append("id", id)
         .append("username", username)
         .append("email", email)
-        .append("userType", userType)
+        .append("admin", admin)
         .toString();
   }
 
@@ -91,5 +112,13 @@ public class User {
   @Override
   public int hashCode() {
     return Objects.hashCode(id);
+  }
+
+  public boolean isAdmin() {
+    return admin;
+  }
+
+  public void setAdmin(boolean admin) {
+    this.admin = admin;
   }
 }
