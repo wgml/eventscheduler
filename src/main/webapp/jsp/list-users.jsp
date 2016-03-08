@@ -10,6 +10,7 @@
 
 <html>
 <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <script src="../js/bootstrap.min.js"></script>
     <title>Users</title>
@@ -70,12 +71,15 @@
                         </c:otherwise>
                     </c:choose>
                 </td>
-                <td><a href="#" id="remove"
-                       onclick="document.getElementById('action').value = 'delete';document.getElementById('userId').value = '${user.id}';
+                <td>
+                    <c:if test="${loggedUser.admin and not user.admin}">
+                        <a href="#" id="remove"
+                           onclick="document.getElementById('action').value = 'delete';document.getElementById('userId').value = '${user.id}';
 
-                               document.getElementById('deleteForm').submit();">
-                    <span class="glyphicon glyphicon-trash"></span>
-                </a>
+                                   document.getElementById('deleteForm').submit();">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </a>
+                    </c:if>
                 </td>
             </tr>
         </c:forEach>

@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
 @Table(name = "invitation")
@@ -30,8 +29,6 @@ public class Invitation {
   @Column(name = "accepted")
   private boolean accepted;
 
-  private static final AtomicLong idProvider = new AtomicLong(0);
-
   public Invitation(User user, Event event) {
     this(user, event, false);
   }
@@ -40,7 +37,6 @@ public class Invitation {
     this.user = user;
     this.event = event;
     this.accepted = accepted;
-//    this.id = idProvider.incrementAndGet();
   }
 
   public Invitation() {

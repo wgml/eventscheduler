@@ -2,6 +2,7 @@ package pl.wgml.eventscheduler.service;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import pl.wgml.eventscheduler.dao.pojo.Event;
 import pl.wgml.eventscheduler.dao.pojo.Invitation;
 import pl.wgml.eventscheduler.dao.pojo.User;
@@ -48,6 +49,9 @@ public class InvitationService {
     if (!invitation.getUser().equals(user)) {
       return false;
     }
+    if (DateTime.now().isAfter(new DateTime(invitation.getEvent().getStartDate()))) {
+      return false;
+    }
     invitation.setAccepted(status);
     Session session = HibernateUtil.getSessionFactory().openSession();
     session.beginTransaction();
@@ -59,6 +63,9 @@ public class InvitationService {
 
   public boolean inviteUserToEvent(User user, Event event) {
     if (getByEvent(event).stream().anyMatch(inv -> inv.getUser().equals(user))) {
+      return false;
+    }
+    if (DateTime.now().isAfter(new DateTime(event.getStartDate()))) {
       return false;
     }
     Session session = HibernateUtil.getSessionFactory().openSession();
@@ -73,6 +80,9 @@ public class InvitationService {
   public boolean removeUserToEvent(User user, Event event) {
     Optional<Invitation> invitation = getByEvent(event).stream().filter(inv -> inv.getUser().equals(user)).findAny();
     if (!invitation.isPresent()) {
+      return false;
+    }
+    if (DateTime.now().isAfter(new DateTime(event.getStartDate()))) {
       return false;
     }
     Session session = HibernateUtil.getSessionFactory().openSession();
@@ -92,6 +102,7 @@ public class InvitationService {
     return userService.getAllUsers()
         .stream()
         .filter(user -> !invited.contains(user))
+        .filter(user -> !user.equals(event.getCreator()))
         .collect(Collectors.toList());
   }
 

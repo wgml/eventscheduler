@@ -11,6 +11,7 @@
 
 <html>
 <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <script src="../js/bootstrap.min.js"></script>
     <title>Events</title>
@@ -65,10 +66,10 @@
                     <a href="/user?id=${event.creator.id}">${event.creator.username}</a>
                 </td>
                 <td>
-                    <fmt:formatDate type="both" value="${event.startDate}"/>
+                    <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${event.startDate}"/>
                 </td>
                 <td>
-                    <fmt:formatDate type="both" value="${event.endDate}"/>
+                    <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${event.endDate}"/>
                 </td>
             </tr>
         </c:forEach>

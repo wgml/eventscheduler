@@ -8,10 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Date;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
 @Table(name = "event")
@@ -37,15 +35,12 @@ public class Event {
   @Column(name = "public")
   private boolean isPublic;
 
-  private static final AtomicLong idProvider = new AtomicLong(0);
-
   public Event(String name, User creator, Date startDate, Date endDate, boolean isPublic) {
     this.name = name;
     this.creator = creator;
     this.startDate = startDate;
     this.endDate = endDate;
     this.isPublic = isPublic;
-//    this.id = idProvider.incrementAndGet();
   }
 
   public Event() {

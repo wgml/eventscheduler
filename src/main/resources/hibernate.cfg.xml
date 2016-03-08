@@ -7,7 +7,7 @@
   <session-factory>
     <!-- Database connection settings -->
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-    <property name="connection.url">jdbc:mysql://localhost:3306/event_scheduler</property>
+    <property name="connection.url">jdbc:mysql://localhost:3306/event_scheduler?characterEncoding=UTF-8</property>
     <property name="connection.username">zz</property>
     <property name="connection.password">zz</property>
 

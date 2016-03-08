@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
 @Table(name = "user")
@@ -30,8 +29,6 @@ public class User {
   @Column(name = "admin")
   private boolean admin;
 
-  private static AtomicLong idProvider = new AtomicLong(0);
-
   public User() {
   }
 
@@ -40,7 +37,6 @@ public class User {
     this.password = password;
     this.email = email;
     this.admin = userType.equals(UserType.ADMINISTRATOR);
-//    this.id = idProvider.incrementAndGet();
   }
 
   public User(Long id, String username, String password, String email, UserType userType) {
@@ -91,6 +87,14 @@ public class User {
     this.admin = UserType.ADMINISTRATOR.equals(userType);
   }
 
+  public boolean isAdmin() {
+    return admin;
+  }
+
+  public void setAdmin(boolean admin) {
+    this.admin = admin;
+  }
+
   @Override
   public String toString() {
     return new ToStringBuilder(this)
@@ -112,13 +116,5 @@ public class User {
   @Override
   public int hashCode() {
     return Objects.hashCode(id);
-  }
-
-  public boolean isAdmin() {
-    return admin;
-  }
-
-  public void setAdmin(boolean admin) {
-    this.admin = admin;
   }
 }

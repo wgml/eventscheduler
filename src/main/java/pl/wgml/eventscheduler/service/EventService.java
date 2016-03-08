@@ -2,6 +2,7 @@ package pl.wgml.eventscheduler.service;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import pl.wgml.eventscheduler.dao.pojo.Event;
@@ -22,6 +23,7 @@ public class EventService {
     session.close();
     return events.stream()
         .filter(event -> AccessPermissions.canViewEvent(event, user))
+        .sorted((a, b) -> a.getStartDate().compareTo(b.getStartDate()))
         .collect(Collectors.toList());
   }
 
@@ -29,7 +31,8 @@ public class EventService {
     Session session = HibernateUtil.getSessionFactory().openSession();
     @SuppressWarnings("unchecked")
     List<Event> events = (List<Event>) session.createCriteria(Event.class)
-        .add(Restrictions.eq("creator", creator)).list();
+        .add(Restrictions.eq("creator", creator))
+        .addOrder(Order.asc("startDate")).list();
     session.close();
     return events.stream()
         .filter(event -> AccessPermissions.canViewEvent(event, user))
@@ -40,7 +43,8 @@ public class EventService {
     Session session = HibernateUtil.getSessionFactory().openSession();
     @SuppressWarnings("unchecked")
     List<Event> events = (List<Event>) session.createCriteria(Event.class)
-        .add(Restrictions.ge("startDate", dateTime.toDate())).list();
+        .add(Restrictions.ge("startDate", dateTime.toDate()))
+        .addOrder(Order.asc("startDate")).list();
     session.close();
     return events.stream()
         .filter(event -> AccessPermissions.canViewEvent(event, user))
@@ -51,7 +55,8 @@ public class EventService {
     Session session = HibernateUtil.getSessionFactory().openSession();
     @SuppressWarnings("unchecked")
     List<Event> events = (List<Event>) session.createCriteria(Event.class)
-        .add(Restrictions.between("startDate", dateTime.toDate(), dateTime.plusDays(1).toDate())).list();
+        .add(Restrictions.between("startDate", dateTime.toDate(), dateTime.plusDays(1).toDate()))
+        .addOrder(Order.asc("startDate")).list();
     session.close();
     return events.stream()
         .filter(event -> AccessPermissions.canViewEvent(event, user))

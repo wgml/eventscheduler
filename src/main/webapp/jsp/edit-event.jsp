@@ -3,6 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <script src="../js/bootstrap.min.js"></script>
     <title>${event.name}</title>
@@ -53,7 +54,7 @@
                 <label for="startDate">From</label>
                 <input type="datetime-local" class="form_datetime form-control" id="startDate" name="startDate"
                        <c:if test="${not empty event.startDate}">
-                           value="<fmt:formatDate value="${event.startDate}" pattern="yyyy-MM-dd"/>T<fmt:formatDate value="${event.startDate}" pattern="hh:mm"/>"
+                           value="<fmt:formatDate value="${event.startDate}" pattern="yyyy-MM-dd"/>T<fmt:formatDate value="${event.startDate}" pattern="HH:mm"/>"
                        </c:if>
                 />
             </div>
@@ -61,7 +62,7 @@
                 <label for="endDate">From</label>
                 <input type="datetime-local" class="form_datetime form-control" id="endDate" name="endDate"
                         <c:if test="${not empty event.startDate}">
-                            value="<fmt:formatDate value="${event.endDate}" pattern="yyyy-MM-dd"/>T<fmt:formatDate value="${event.endDate}" pattern="hh:mm"/>"
+                            value="<fmt:formatDate value="${event.endDate}" pattern="yyyy-MM-dd"/>T<fmt:formatDate value="${event.endDate}" pattern="HH:mm"/>"
                         </c:if>
                 />
             </div>

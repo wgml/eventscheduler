@@ -4,6 +4,7 @@
 
 <html>
 <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <script src="../js/bootstrap.min.js"></script>
     <title>${user.username}</title>
@@ -44,15 +45,17 @@
                 <a href="/event?id=${event.id}">${event.name}</a>
             </td>
             <td>
-                <fmt:formatDate type="both" value="${event.startDate}"/>
+                <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${event.startDate}"/>
             </td>
             <td>
-                <fmt:formatDate type="both" value="${event.endDate}"/>
+                <fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${event.endDate}"/>
             </td>
             <td>
-                <a href="/editevent?id=${event.id}">
-                    <span class="glyphicon glyphicon-cog"></span>
-                </a>
+                <c:if test="${loggedUser == user or loggedUser.admin}">
+                    <a href="/editevent?id=${event.id}">
+                        <span class="glyphicon glyphicon-cog"></span>
+                    </a>
+                </c:if>
             </td>
         </tr>
     </c:forEach>
@@ -90,18 +93,20 @@
             </td>
             <td>
             <td>
-            <a href="#" id="accept"
-                   onclick="document.getElementById('action').value = 'accept';document.getElementById('invId').value = '${inv.id}';
+            <c:if test="${loggedUser == user or loggedUser.admin}">
+                <a href="#" id="accept"
+                       onclick="document.getElementById('action').value = 'accept';document.getElementById('invId').value = '${inv.id}';
+
+                               document.getElementById('acceptForm').submit();">
+                    <span class="glyphicon glyphicon-ok"></span>
+                </a>
+                <a href="#" id="ignore"
+                   onclick="document.getElementById('action').value = 'ignore';document.getElementById('invId').value = '${inv.id}';
 
                            document.getElementById('acceptForm').submit();">
-                <span class="glyphicon glyphicon-ok"></span>
-            </a>
-            <a href="#" id="ignore"
-               onclick="document.getElementById('action').value = 'ignore';document.getElementById('invId').value = '${inv.id}';
-
-                       document.getElementById('acceptForm').submit();">
-                <span class="glyphicon glyphicon-remove"></span>
-            </a>
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+            </c:if>
         </td>
         </tr>
         </c:forEach>

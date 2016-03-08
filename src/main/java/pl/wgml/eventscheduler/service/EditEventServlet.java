@@ -53,6 +53,8 @@ public class EditEventServlet extends AbstractServlet {
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    request.setCharacterEncoding("UTF-8");
+
     try {
       if (request.getParameter("deleteAction") != null) {
         deleteEvent(request, response);
@@ -85,7 +87,7 @@ public class EditEventServlet extends AbstractServlet {
     boolean isPublic = request.getParameter("isPublic") != null;
     DateTime startDate = DateTime.parse(request.getParameter("startDate"));
     DateTime endDate = DateTime.parse(request.getParameter("endDate"));
-
+    System.err.println(name);
     String errorMsg = null;
     if (!EventValidation.validateName(name)) {
       errorMsg = "Invalid name";
