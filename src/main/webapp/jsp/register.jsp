@@ -33,19 +33,19 @@
                     <div style="margin-bottom: 25px" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                         <input id="register-username" type="text" class="form-control" name="username" value=""
-                               placeholder="username">
+                               placeholder="What should we call you">
                     </div>
 
                     <div style="margin-bottom: 25px" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                         <input id="register-password" type="password" class="form-control" name="password"
-                               placeholder="password">
+                               placeholder="At least 6 characters">
                     </div>
 
                     <div style="margin-bottom: 25px" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
                         <input id="register-email" type="text" class="form-control" name="email" value=""
-                               placeholder="email">
+                               placeholder="Your email">
                     </div>
 
                     <button type="submit" class="btn btn-info">

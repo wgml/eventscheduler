@@ -34,7 +34,7 @@ public class RegisterServlet extends HttpServlet {
 
     String username = request.getParameter("username");
     String password = request.getParameter("password");
-    String email = request.getParameter("password");
+    String email = request.getParameter("email");
 
     if (!UserValidation.validateUsername(username)) {
       failRegister(request, response, "Invalid username");
@@ -63,6 +63,7 @@ public class RegisterServlet extends HttpServlet {
       request.setAttribute("successMsg", "Account created. You can now login.");
       showForm(request, response);
     } else {
+      failRegister(request, response, "Registration failed.");
       logger.info(String.format("could not register user with username='%s', password='%s', email='%s'",
           username, password, email));
       request.setAttribute("wanMsg", "Registration failed, try again.");
