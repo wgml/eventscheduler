@@ -24,7 +24,7 @@ public class EditEventServlet extends AbstractServlet {
 
   private static final Logger logger = LogManager.getLogger();
 
-  EventService eventService = new EventService();
+  private EventService eventService = new EventService();
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -87,7 +87,6 @@ public class EditEventServlet extends AbstractServlet {
     boolean isPublic = request.getParameter("isPublic") != null;
     DateTime startDate = DateTime.parse(request.getParameter("startDate"));
     DateTime endDate = DateTime.parse(request.getParameter("endDate"));
-    System.err.println(name);
     String errorMsg = null;
     if (!EventValidation.validateName(name)) {
       errorMsg = "Invalid name";

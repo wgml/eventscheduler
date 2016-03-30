@@ -1,0 +1,4 @@
+INSERT INTO event_scheduler.event (id, event_name, cretor_id, event_start_date, event_end_date, public) VALUES (1, 'Mecz Barcelony', 2, '2016-05-10 20:00:00', '2016-05-10 23:00:00', 1);
+INSERT INTO event_scheduler.event (id, event_name, cretor_id, event_start_date, event_end_date, public) VALUES (2, 'Ważne spotkanie', 1, '2016-04-30 06:00:00', '2016-05-02 09:00:00', 0);
+INSERT INTO event_scheduler.event (id, event_name, cretor_id, event_start_date, event_end_date, public) VALUES (3, 'Weekend', 1, '2016-07-28 10:00:00', '2016-08-01 12:00:00', 1);
+INSERT INTO event_scheduler.event (id, event_name, cretor_id, event_start_date, event_end_date, public) VALUES (9, 'Koncert', 3, '2016-05-30 11:00:00', '2016-05-31 01:00:00', 1);
